@@ -1,0 +1,31 @@
+.post-author {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.post-author small {
+    font-size: 10px;
+}
+
+.post-author-img {
+    width: 40px;
+    height: 40px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.post-author-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.post-author-info {
+    display: flex;
+    flex-direction: column;
+}

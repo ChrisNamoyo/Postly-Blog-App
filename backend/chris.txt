@@ -1,0 +1,175 @@
+for multiple uploads
+
+// utils/multerConfig.js
+import multer from "multer";
+import path from "path";
+
+// Common file size limit
+const limits = {
+  fileSize: 2 * 1024 * 1024 // 2MB
+};
+
+// ========== IMAGE UPLOAD ==========
+const imageStorage = multer.diskStorage({
+  destination: "uploads/images",
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
+const imageFileFilter = (req, file, cb) => {
+  const allowed = ["image/jpeg", "image/png", "image/jpg"];
+  allowed.includes(file.mimetype)
+    ? cb(null, true)
+    : cb(new Error("Only image files are allowed"), false);
+};
+
+export const uploadImage = multer({
+  storage: imageStorage,
+  fileFilter: imageFileFilter,
+  limits
+});
+
+// ========== DOCUMENT UPLOAD ==========
+const docStorage = multer.diskStorage({
+  destination: "uploads/docs",
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
+const docFileFilter = (req, file, cb) => {
+  const allowed = ["application/pdf", "application/msword"];
+  allowed.includes(file.mimetype)
+    ? cb(null, true)
+    : cb(new Error("Only PDF or Word files allowed"), false);
+};
+
+export const uploadDoc = multer({
+  storage: docStorage,
+  fileFilter: docFileFilter,
+  limits
+});
+
+
+
+// routes/docRoutes.js
+import express from "express";
+import { uploadDocumentHandler } from "../controllers/docController.js";
+import { uploadDoc } from "../utils/multerConfig.js";
+
+const router = express.Router();
+
+router.post("/upload", uploadDoc.single("document"), uploadDocumentHandler);
+
+export default router;
+
+
+//global error handling
+// server.js or app.js
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({ message: "File too large (Max 2MB)." });
+    }
+  } else if (err) {
+    return res.status(400).json({ message: err.message });
+  }
+
+  next();
+});
+
+
+
+******* about getting info  
+const post = await Post.find().populate("creator", "name email");
+
+{
+  title: "Post Title",
+  creator: {
+    _id: "...",
+    name: "Jane Doe",
+    email: "jane@example.com"
+  }
+}
+*******
+
+************************ pagination **********************************
+const getPosts = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;      // default to page 1
+    const limit = parseInt(req.query.limit) || 10;   // default 10 posts per page
+
+    const skip = (page - 1) * limit;
+
+    const posts = await postModel
+      .find()
+      .sort({ updatedAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalPosts = await postModel.countDocuments();
+
+    return res.json({
+      success: true,
+      posts,
+      page,
+      totalPages: Math.ceil(totalPosts / limit),
+      totalPosts,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.json({
+      success: false,
+      message: "Couldn't fetch posts, server error",
+    });
+  }
+};
+
+*******************pagination with search field**********************
+const getPosts = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+
+    const skip = (page - 1) * limit;
+
+    // Create search filter
+    const searchFilter = {
+      title: { $regex: search, $options: "i" } // case-insensitive
+    };
+
+    const posts = await postModel
+      .find(searchFilter)
+      .sort({ updatedAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalPosts = await postModel.countDocuments(searchFilter);
+
+    res.json({
+      success: true,
+      posts,
+      page,
+      totalPages: Math.ceil(totalPosts / limit),
+      totalPosts,
+    });
+  } catch (error) {
+    console.error("Search + pagination error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching posts.",
+    });
+  }
+};
+
+
+***caution performance tip***
+Regex on large collections without indexing can be slow. If you need fast text search at scale, consider:
+        MongoDB's $text index (for full-text search)
+        An external search engine (like Elasticsearch or Algolia)
+
+
+
+

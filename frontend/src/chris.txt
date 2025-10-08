@@ -1,0 +1,275 @@
+*****************Making the App better****************
+1.Changing authorization to bearer token
+2.Add Admin role
+ 
+ 
+***********************Complete All the Above***********
+ 
+ 1. Logout Logic
+Create a global auth context to store token and user info.
+
+import { createContext, useState, useEffect } from "react";
+
+export const AuthContext = createContext();
+
+const AuthProvider = ({ children }) => {
+  const [token, setToken] = useState(localStorage.getItem("token") || null);
+  const [user, setUser] = useState(null);
+
+  const login = (token, userData) => {
+    localStorage.setItem("token", token);
+    setToken(token);
+    setUser(userData);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
+    setUser(null);
+  };
+
+  useEffect(() => {
+    // Fetch user if token exists
+    if (token && !user) {
+      fetch("http://localhost:4500/api/user/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) setUser(data.user);
+        })
+        .catch(() => logout());
+    }
+  }, [token]);
+
+  return (
+    <AuthContext.Provider value={{ token, user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export default AuthProvider;
+
+ Wrap your App.jsx with it:
+
+import AuthProvider from './context/AuthContext';
+
+<BrowserRouter>
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+</BrowserRouter>
+
+
+ 2. Protect Routes (PrivateRoute Component)
+You can protect pages that require login like this:
+
+import { useContext } from "react";
+import { Navigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+
+const PrivateRoute = ({ children }) => {
+  const { token } = useContext(AuthContext);
+  return token ? children : <Navigate to="/" />;
+};
+
+export default PrivateRoute;
+
+Usage:
+
+<Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+
+
+3. Show User Info After Login
+Anywhere in your app:
+
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+
+function Header() {
+  const { user, logout } = useContext(AuthContext);
+
+  return (
+    <div className="header">
+      {user ? (
+        <>
+          <img src={`http://localhost:4500/images/${user.avatar}`} alt="avatar" />
+          <span>Hello, {user.name}</span>
+          <button onClick={logout}>Logout</button>
+        </>
+      ) : (
+        <span>Not logged in</span>
+      )}
+    </div>
+  );
+}
+
+
+
+
+🧪 Bonus Ideas to Add Later
+Comments section (nested replies)
+
+Post reactions (like/dislike)
+
+Search + filters by category/author
+
+WYSIWYG editor for writing (e.g. TipTap or Quill)
+
+Analytics dashboard for Admin
+
+🚀 What You'll Learn
+Managing complex permissions
+
+Middleware chaining
+
+Clean backend architecture
+
+Real-world project structure
+
+Working with file uploads & role-based frontends
+
+
+
+**************pagination frontend*************
+import { useState } from "react";
+
+const PostsPerPage = 12;
+
+function PaginatedPosts({ posts }) {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(posts.length / PostsPerPage);
+
+  const indexOfLastPost = currentPage * PostsPerPage;
+  const indexOfFirstPost = indexOfLastPost - PostsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+
+  return (
+    <div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {currentPosts.map((post, index) => (
+          <div key={index} className="p-4 bg-white shadow rounded">
+            <h3 className="text-xl font-semibold">{post.title}</h3>
+            <p>{post.body}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 flex justify-center gap-2">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentPage(index + 1)}
+            className={`px-3 py-1 rounded ${
+              currentPage === index + 1
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
+
+
+************server side*****************
+const express = require("express");
+const router = express.Router();
+const Post = require("../models/Post"); // your Mongoose model
+
+// GET /api/posts?page=1&limit=12
+router.get("/", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+
+    const skip = (page - 1) * limit;
+
+    const [posts, total] = await Promise.all([
+      Post.find().sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Post.countDocuments()
+    ]);
+
+    res.json({
+      data: posts,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalPosts: total
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+module.exports = router;
+
+
+*******************************
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+const PostsPerPage = 12;
+
+function PaginatedPosts() {
+  const [posts, setPosts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  const fetchPosts = async (page) => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`/api/posts?page=${page}&limit=${PostsPerPage}`);
+      setPosts(res.data.data);
+      setTotalPages(res.data.totalPages);
+      setCurrentPage(res.data.currentPage);
+    } catch (err) {
+      console.error("Error fetching posts", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts(currentPage);
+  }, [currentPage]);
+
+  return (
+    <div>
+      {loading ? (
+        <p className="text-center">Loading posts...</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {posts.map((post) => (
+            <div key={post._id} className="p-4 bg-white shadow rounded">
+              <h3>{post.title}</h3>
+              <p>{post.body}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-6 flex justify-center gap-2">
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`px-3 py-1 rounded ${
+              currentPage === i + 1 ? "bg-blue-600 text-white" : "bg-gray-200"
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+

@@ -1,0 +1,29 @@
+.author-container {
+    max-width: 400px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.author-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.author-info img {
+    width: 7.5vw;
+    max-width: 60px;
+    aspect-ratio: 1;
+    min-width: 60px;
+    border-radius: 50%;
+}
+
+hr {
+    margin: 5px 0;
+}
+
+.author-btn {
+    background-color: var(--color-white);
+    color: var(--color-primary);
+}

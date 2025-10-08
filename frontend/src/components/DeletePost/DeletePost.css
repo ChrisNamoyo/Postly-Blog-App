@@ -1,0 +1,7 @@
+.delete {
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: var(--color-red);
+    color: var(--color-white);
+    font-weight: 400;
+}

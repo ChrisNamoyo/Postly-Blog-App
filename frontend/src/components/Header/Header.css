@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Lemon&display=swap');
+
+.header {
+    background-image: url("/about_img.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 75vh;
+    color: white;
+    position: relative;
+    margin: 30px auto;
+    border-radius: 8px;
+}
+
+.header-content {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vw;
+    max-width: 50%;
+    bottom: 10%;
+    left: 6vw;
+    align-items: start;
+    animation: fadeIn 3s;
+}
+
+
+.header-content h2 {
+    font-family: "Lemon", serif;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 48px;
+    color: white;
+    font-size: max(4.5vw, 22px);
+}
+
+@media (max-width: 1050px) {
+    .header-content {
+        max-width: 45%;
+    }
+}
+@media (max-width: 750px) {
+    .header-content {
+        max-width: 65%;
+    }
+
+    .header-content h2 {
+        line-height: 1.2;
+    }
+}

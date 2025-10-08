@@ -1,0 +1,53 @@
+.ql-editor {
+    overflow: scroll;
+    background: white;
+    height: 8rem !important;
+}
+
+.create-post {
+    width: 80%;
+    margin-inline: auto;
+    display: grid;
+    place-items: center;
+}
+
+.create-post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.create-post-form h2 {
+    text-align: center;
+}
+
+.create-post-form input, .create-post-form select {
+    padding: 10px;
+    border: none;
+    outline: none;
+    border-radius: 4px;
+}
+
+.create-post-form .error {
+    padding: 8px 10px;
+    border: none;
+    outline: none; 
+    background: var(--color-red);
+    color: var(--color-white);
+    border-radius: 4px;
+    margin-bottom: 0px;
+    font-size: 12px;
+}
+
+.create-post-form button {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+@media (max-width:750px) {
+    .create-post {
+        width: 100%;
+    }
+}
