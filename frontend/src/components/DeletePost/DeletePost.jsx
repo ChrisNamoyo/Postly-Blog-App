@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import './deletePost.css'
+import './DeletePost.css'
 import { storeContext } from '../../context/StoreContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
