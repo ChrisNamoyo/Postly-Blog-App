@@ -1,12 +1,6 @@
 import postModel from "../models/postModel.js"
 import userModel from "../models/userModel.js"
-import fs from "fs"
-import path from "path"
-import { fileURLToPath } from "url"
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
+import cloudinary from "../config/cloudinary.js"
 
 const createPost = async (req, res) => {
     try {
@@ -15,9 +9,10 @@ const createPost = async (req, res) => {
             return res.json({success: false, message: "Fill in all fields and choose thumbnail"})
         }
 
-        const thumbnail = req.file?.filename
+        const imageUrl = req.file?.path
+        const imageId = req.file?.filename
 
-        const newPost = await postModel.create({title, description, category, thumbnail, creator: req.userId})
+        const newPost = await postModel.create({title, description, category, imageUrl, imageId, creator: req.userId})
         if(!newPost) {
             return res.json({success: false, message: "Post wasn't created"})
         }
@@ -112,13 +107,12 @@ const editPost = async (req, res) => {
             return res.json({ success: true, message: "Post edited", updatePost })
         }
 
-        if(post.thumbnail) {
-            const oldPath = path.join(__dirname, "..", "uploads", post.thumbnail)
-            fs.unlink(oldPath, (err) => {
-                if(err) {
-                    console.log("Failed to delete old thumbnail", err.message)
-                }
-            })
+        if(req.file) {
+            if(post.imageId) {
+                await cloudinary.uploader.destroy(post.imageId)
+            }
+            post.imageUrl = req.file.path
+            post.imageId = req.file.filename
         }
 
         post.title = title
@@ -150,13 +144,8 @@ const deletePost = async (req, res) => {
             return res.json({success: false, message: "Unauthorized"})
         }
 
-        if(post.thumbnail) {
-            const oldPath = path.join(__dirname, "..", "uploads", post.thumbnail)
-            fs.unlink(oldPath,(err) => {
-                if(err) {
-                    console.log("Couldn't delete post's thumbnail")
-                }
-            })
+        if(post.imageId) {
+            await cloudinary.uploader.destroy(post.imageId)
         }
 
         const updatedUser = await userModel.findByIdAndUpdate(req.userId, {$inc: {posts: -1}}, {new: true})

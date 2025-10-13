@@ -1,10 +1,12 @@
 import mongoose from "mongoose"
+import { type } from "os"
 const { model, models, Schema } = mongoose
 
 const postSchema = new Schema({
     title: {type: String, required: true},
     description: {type: String, required: true},
-    thumbnail: {type: String, required: true},
+    imageUrl: {type: String, required: true},
+    imageId: {type: String, required: true},
     creator: {type: Schema.Types.ObjectId, ref: "users"},
     category: {
         type: String,

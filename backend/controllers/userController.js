@@ -1,14 +1,12 @@
 import validator from "validator"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import fs from "fs"
-import path from "path"
-import { fileURLToPath } from "url"
 import userModel from "../models/userModel.js"
+import cloudinary from "../config/cloudinary.js"
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
+const default_profile_url = "https://res.cloudinary.com/dz5cingki/image/upload/v1760303994/default_llsuwf.jpg"
+const default_profile_id = "default_llsuwf"
 
 const createToken = (id) => {
     return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: '7d'})
@@ -42,7 +40,7 @@ const registerUser = async (req, res) => {
             name: name,
             email: newEmail,
             password: hashedPassword,
-            avatar: "default.jpg"
+            avatar: default_profile_url
         })
 
         const user = await newUser.save()
@@ -88,25 +86,21 @@ const loginUser = async (req, res) => {
 const changeAvatar = async (req, res) => {
     try {
         const userId = req.userId
-        const newAvatar = req.file?.filename || "default.jpg"
+        const newAvatarUrl = req.file?.path || default_profile_url
+        const newAvatarId = req.file?.filename || default_profile_id
 
-        console.log(userId, newAvatar)
         if(!userId) {
             return res.json({success: false, message: "Unauthorized Id. Login again"})
         }
         
         const user = await userModel.findById(userId)
 
-        if(user.avatar && user.avatar !== "default.jpg") {
-            const oldPath = path.join(__dirname, "..", "uploads", user.avatar)
-            fs.unlink(oldPath, (err) => {
-                if(err) {
-                    console.log("Failed to delete old avatar", err.message)
-                }
-            })
+        if(user.avatar && user.avatar !== default_profile_url) {
+            await cloudinary.uploader.destroy(user.avatarId)
         }
 
-        user.avatar = newAvatar
+        user.avatarUrl = newAvatarUrl
+        user.avatarId = newAvatarId
         await user.save()
 
         const updatedUser = user.toObject()

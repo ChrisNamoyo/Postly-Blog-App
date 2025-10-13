@@ -1,6 +1,6 @@
 import express from "express"
 import authMiddleware from "../middleware/auth.js"
-import { uploadImage } from "../utilis/multerConfig.js"
+import uploadImage from "../utilis/multer.js"
 import { createPost, getPosts, getCategoryPosts, getUserPost, editPost, deletePost, getPost } from "../controllers/postController.js"
 
 const postRouter = express.Router()

@@ -1,7 +1,7 @@
 import express from "express"
 import { registerUser, loginUser, changeAvatar, editUser, getUser, getAuthors } from "../controllers/userController.js"
 import authMiddleware from "../middleware/auth.js"
-import { uploadImage } from "../utilis/multerConfig.js"
+import uploadImage from "../utilis/multer.js"
 
 const userRouter = express.Router()
 
