@@ -3,7 +3,7 @@ import { createContext, useState } from "react"
 export const storeContext = createContext(null)
 
 const StoreContextProvider = (props) => {
-    const base_url = "http://localhost:4500"
+    const base_url = import.meta.env.VITE_API_URL
     const [token, setToken] = useState(localStorage.getItem("token"))
     const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("currentUser")) || null)
     const [showLogin, setShowLogin] = useState(false)
