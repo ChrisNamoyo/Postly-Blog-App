@@ -25,7 +25,7 @@ function PostsDisplay({category}) {
         fetchPost()
     }, [])
 
-    const filteredPosts = posts.filter(post => category === "All" || post.category === category)
+    const filteredPosts = posts?.filter(post => category === "All" || post.category === category)
 
     if(isLoading) return <h2>Loading posts...</h2>
     if(!posts.length) return <h2 className='center'>No posts available</h2>

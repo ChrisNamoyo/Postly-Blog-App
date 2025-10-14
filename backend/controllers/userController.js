@@ -40,7 +40,8 @@ const registerUser = async (req, res) => {
             name: name,
             email: newEmail,
             password: hashedPassword,
-            avatar: default_profile_url
+            avatarUrl: default_profile_url,
+            avatarId: default_profile_id
         })
 
         const user = await newUser.save()
