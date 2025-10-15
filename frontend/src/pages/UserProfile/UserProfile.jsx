@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './UserProfile.css'
 import { Link, useParams } from 'react-router-dom'
 import { FaEdit } from "react-icons/fa"
@@ -12,7 +12,8 @@ function UserProfile() {
   const {id} = useParams()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [avatar, setAvatar] = useState('')
+  const [avatar, setAvatar] = useState(null)
+  const [preview, setPreview] = useState('')
   const [isAvatarTouched, setIsAvatarTouched] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
@@ -21,6 +22,19 @@ function UserProfile() {
     newPassword: "",
     newConfirmPassword: ""
   })
+
+  // generate preview when a new file is chosen
+  useEffect(() => {
+    if(avatar && avatar instanceof Blob) {
+      const objectUrl = URL.createObjectURL(avatar)
+      setPreview(objectUrl)
+
+      // cleanup url to prevent memory leaks
+      return () => URL.revokeObjectURL(objectUrl)
+    } else {
+      setPreview('')
+    }
+  }, [avatar])
 
   const handleChange = (e) => {
     setFormData(prev => ({...prev, [e.target.name] : e.target.value}))
@@ -35,7 +49,7 @@ function UserProfile() {
       const {data} = await axios.post(`${base_url}/api/user/change-avatar`, postData, {headers: {token}})
       if(data.success) {
         toast(data.message)
-        setAvatar(data.updatedUser.avatar)
+        setAvatar(null)
         setCurrentUser(data.updatedUser)
         localStorage.setItem("currentUser", JSON.stringify(data.updatedUser))
       }
@@ -72,11 +86,19 @@ function UserProfile() {
         </Link>
         <div className="user-profile-wrapper">
           <div className="user-profile">
-            <img src={ avatar? URL.createObjectURL(avatar) : currentUser.avatarUrl}/>
+            <img src={ preview || currentUser.avatarUrl}/>
           </div>
           <form className='user-avatar-form'>
-            <input type="file" name='avatar' id='avatar' onChange={e => setAvatar(e.target.files[0])}/>
-            <label htmlFor="avatar" onClick={()=> setIsAvatarTouched(true)}><FaEdit /></label>
+            <input 
+              type="file" 
+              name='avatar' 
+              id='avatar' 
+              onChange={(e) => {
+                setAvatar(e.target.files[0])
+                setIsAvatarTouched(true)
+              }}
+            />
+            <label htmlFor="avatar"><FaEdit /></label>
           </form>
           {isAvatarTouched && <button className='user-avatar-checked-btn' onClick={updateAvatar}><FaCheck /></button>}
         </div>
