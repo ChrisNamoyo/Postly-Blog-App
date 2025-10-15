@@ -61,7 +61,7 @@ const getCategoryPosts = async (req, res) => {
     try {
         const {category} = req.params
         const posts = await postModel.find({category}).sort({createdAt: -1})
-            .populate("creator", "name avatar _id")
+            .populate("creator", "name avatarUrl _id")
         return res.json({success: true, posts})
     } catch (error) {
         console.log(error)
@@ -74,7 +74,7 @@ const getUserPost = async (req, res) => {
     try {
         const {id} = req.params
         const posts = await postModel.find({creator: id}).sort({createdAt: -1})
-            .populate("creator", "name avatar _id")
+            .populate("creator", "name avatarUrl _id")
         return res.json({success: true, posts})
     } catch (error) {
         console.log(error)
