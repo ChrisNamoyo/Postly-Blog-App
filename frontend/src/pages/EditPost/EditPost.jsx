@@ -33,6 +33,7 @@ function EditPost() {
 	const [thumbnail, setThumbnail] = useState('')
 	const [post, setPost] = useState(null)
 	const [isLoading, setIsLoading] = useState(false)
+	const [isEditing, setIsEditing] = useState(false)
 	const { id } = useParams()
 	const { base_url, token } = useContext(storeContext)
 	const navigate = useNavigate()
@@ -58,6 +59,7 @@ function EditPost() {
 	}, [])
 
 	const editPost = async (e) => {
+		setIsEditing(true)
 		e.preventDefault()
 		const formData = new FormData()
 
@@ -77,6 +79,8 @@ function EditPost() {
 		} catch (err) {
 			console.log(err)
 			toast("Network or server error")
+		} finally {
+			setIsEditing(false)
 		}
 	}
 
@@ -108,7 +112,9 @@ function EditPost() {
 					onChange={e => setThumbnail(e.target.files[0])}
 					accept='png, jpg, jpeg'
 				/>
-				<button type="submit" className='btn'>Update</button>
+				<button type="submit" className='btn' disabled={isEditing}>
+					{isEditing ? "Editing..." : "Edit"}
+				</button>
 			</form>
 		</section>
 	)

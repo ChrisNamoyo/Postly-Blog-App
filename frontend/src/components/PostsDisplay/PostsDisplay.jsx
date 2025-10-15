@@ -13,6 +13,7 @@ function PostsDisplay({category}) {
         setIsLoading(true)
         try {
             const {data} = await axios.get(`${base_url}/api/post`)
+            console.log(data)
             setPosts(data.posts)
         } catch (err) {
             console.log(err)

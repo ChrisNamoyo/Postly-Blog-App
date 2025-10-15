@@ -23,7 +23,7 @@ function Post({thumbnail, title, description, category, id, createdAt, creator})
             <PostAuthor 
               createdAt={createdAt}
               creator={creator}
-              />
+            />
             <Link to={`/posts/categories/${category}`} className='btn cat'>{category}</Link>
           </div>
         </div>

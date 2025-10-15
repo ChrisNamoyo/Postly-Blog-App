@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { formatDistanceToNow } from 'date-fns'
 
 function PostAuthor({createdAt, creator}) {
+
   return (
     <Link to={`/posts/users/${creator?._id}`}>
         <div className='post-author'>

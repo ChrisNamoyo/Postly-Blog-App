@@ -5,7 +5,7 @@ import userModel from "../models/userModel.js"
 import cloudinary from "../config/cloudinary.js"
 
 
-const default_profile_url = "https://res.cloudinary.com/dz5cingki/image/upload/v1760303994/default_llsuwf.jpg"
+const default_profile_url = "https://res-console.cloudinary.com/dz5cingki/thumbnails/v1/image/upload/v1760303994/ZGVmYXVsdF9sbHN1d2Y=/drilldown"
 const default_profile_id = "default_llsuwf"
 
 const createToken = (id) => {

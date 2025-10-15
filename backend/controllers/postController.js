@@ -32,7 +32,7 @@ const createPost = async (req, res) => {
 
 const getPosts = async (req, res) => {
     try {
-        const posts = await postModel.find().sort({updatedAt: -1}).populate("creator", "name avatar _id")
+        const posts = await postModel.find().sort({updatedAt: -1}).populate("creator", "name avatarUrl _id")
         return res.json({success: true, posts})
     } catch (error) {
         console.log(error)
@@ -45,7 +45,7 @@ const getPost = async (req, res) => {
     try {
         const {id} = req.params
         const post = await postModel.findById(id)
-            .populate("creator", "name avatar _id")
+            .populate("creator", "name avatarUrl _id")
         if(!post) {
             return res.json({success: false, message: "Post wasn't found"})
         }

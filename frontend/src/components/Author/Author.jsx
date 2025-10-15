@@ -1,12 +1,12 @@
 import './Author.css'
 import { Link } from 'react-router-dom'
 
-function Author({avatarUrl, name, posts, id}) {
+function Author({avatar, name, posts, id}) {
   return (
     <>
         <div className='author-container'>
             <div className="author-info">
-                <img src={avatarUrl} alt="" />
+                <img src={avatar} alt="" />
                 <div className="author-details">
                     <h5>{name}</h5>
                     <p>{`${posts} posts`}</p>
