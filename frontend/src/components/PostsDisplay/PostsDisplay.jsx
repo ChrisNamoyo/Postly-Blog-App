@@ -41,7 +41,7 @@ function PostsDisplay({category}) {
                         <Post
                             key={post._id}
                             id={post._id}
-                            thumbnail={post.thumbnail}
+                            thumbnail={post.imageUrl}
                             title={post.title}
                             category={post.category}
                             description={post.description}

@@ -47,7 +47,7 @@ function PostDetail() {
         }
       </div>
       <div className='post-detail-thumbnail'>
-          <img src={`${base_url}/images/${post?.thumbnail}`} alt="" width={"100%"}/>
+          <img src={post?.imageUrl} alt="" width={"100%"}/>
       </div>
       <h4>{post?.title}</h4>
       <div className='blog-content' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(post?.description)}}></div>

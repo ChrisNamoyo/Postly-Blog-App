@@ -72,7 +72,7 @@ function UserProfile() {
         </Link>
         <div className="user-profile-wrapper">
           <div className="user-profile">
-            <img src={currentUser.avatarUrl}/>
+            <img src={ avatar? URL.createObjectURL(avatar) : currentUser.avatarUrl}/>
           </div>
           <form className='user-avatar-form'>
             <input type="file" name='avatar' id='avatar' onChange={e => setAvatar(e.target.files[0])}/>

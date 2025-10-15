@@ -41,7 +41,7 @@ function Authors() {
                 <Author
                   key={index}
                   id={author._id}
-                  avatar={author.avatar}
+                  avatar={author.avatarUrl}
                   name={author.name}
                   posts={author.posts}
                 />

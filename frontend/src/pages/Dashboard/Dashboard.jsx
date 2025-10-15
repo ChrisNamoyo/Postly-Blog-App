@@ -36,7 +36,7 @@ function Dashboard() {
         <article className="dashboard-post" key={post._id}>
           <div className="dashboard-post-details">
             <div className="dashboard-post-thumbnail">
-              <img src={`${base_url}/images/${post.thumbnail}`}/>
+              <img src={post.imageUrl}/>
             </div>
             <h5>
               {post.title.length > 40 ? 

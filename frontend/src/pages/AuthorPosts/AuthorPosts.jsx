@@ -43,15 +43,15 @@ function AuthorPosts() {
               {posts.map((post) => {
                 return (
                   <Post 
-                  key={post._id}
+                    key={post._id}
                     id={post._id}
-                    thumbnail={post.thumbnail}
+                    thumbnail={post.imageUrl}
                     title={post.title}
                     description={post.description}
                     category={post.category}
                     createdAt={post.createdAt}
                     creator={post.creator}
-                    />
+                  />
                   )
               })}
           </div>

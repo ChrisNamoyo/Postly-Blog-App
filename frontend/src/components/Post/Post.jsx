@@ -1,12 +1,9 @@
-import React, { useContext } from 'react'
 import './Post.css'
 import { Link } from 'react-router-dom'
 import PostAuthor from '../PostAuthor/PostAuthor'
-import { storeContext } from '../../context/StoreContext'
 import DOMPurify from 'dompurify'
 
 function Post({thumbnail, title, description, category, id, createdAt, creator}) {
-  const {base_url} = useContext(storeContext)
   const shortDescription = 
     description.length > 145 ? description.slice(0, 145) + "..." : description
   const shortTitle = 
@@ -15,7 +12,7 @@ function Post({thumbnail, title, description, category, id, createdAt, creator})
   return (
       <div className='post'>
         <div className="post-img-container">
-          <img src={`${base_url}/images/${thumbnail}`} alt="" />
+          <img src={thumbnail} alt="" />
         </div>
         <div className='post-details'>
           <Link to={`/post/${id}`}>
