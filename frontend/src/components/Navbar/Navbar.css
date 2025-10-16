@@ -132,7 +132,7 @@ nav {
     }
 }
 
-@media (max-width: 750px) {
+@media (max-width: 650px) {
     .navbar-menu {
         display: none;
     }
