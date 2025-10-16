@@ -11,6 +11,7 @@ function Navbar() {
   const {setShowLogin} = useContext(storeContext)
   const {currentUser, token, setToken, setCurrentUser} = useContext(storeContext)
   const [isActive, setIsActive] = useState("home")
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const navigate = useNavigate()
 
   const logout = () => {
@@ -19,6 +20,10 @@ function Navbar() {
     setToken('')
     setCurrentUser(null)
     navigate('/')
+  }
+
+  const toggleHandler = () => {
+    setIsMenuOpen(prev=> !prev)
   }
 
   return (
@@ -37,23 +42,42 @@ function Navbar() {
               <button onClick={setShowLogin}>Sign In</button>
               :
             <div className='nav-profile'>
-              <img src={assets.profile_icon}/>
+              <img src={assets.profile_icon} onClick={toggleHandler}/>
+              {isMenuOpen && 
               <ul className="nav-profile-dropdown">
-                <li className='option' onClick={()=>navigate(`/profile/${currentUser?._id}`)}>
+                <li 
+                  className='option' 
+                  onClick={()=> {
+                    navigate(`/profile/${currentUser?._id}`)
+                    toggleHandler()
+                  }}
+                >
                   <FaRegUser />
                   <small>Profile</small>
                 </li>
                 <hr />
-                <li className='option' onClick={()=>navigate('/create')}>
+                <li 
+                  className='option' 
+                  onClick={()=> {
+                    navigate('/create')
+                    toggleHandler()
+                  }}
+                >
                   <IoCreateOutline />
                   <small>Create_Post</small>
                 </li>
                 <hr />
-                <li className='option' onClick={logout}>
+                <li 
+                  className='option' 
+                  onClick= {()=> {
+                    logout()
+                    toggleHandler()
+                  }}
+                >
                   <MdOutlineLogout />
                   <small>Logout</small>
                 </li>
-              </ul>
+              </ul>}
             </div>
             }
           </div>

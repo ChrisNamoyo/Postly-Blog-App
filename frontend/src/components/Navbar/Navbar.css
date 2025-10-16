@@ -70,12 +70,11 @@ nav {
 .nav-profile-dropdown {
     cursor: pointer;
     position: absolute;
-    display: none;
     z-index: 1;
     right: 0;
 }
 
-.nav-profile:hover .nav-profile-dropdown {
+.nav-profile-dropdown {
     display: flex;
     flex-direction: column;
     gap: 10px;
